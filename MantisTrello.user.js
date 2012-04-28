@@ -10,6 +10,11 @@
 // @require		   https://api.trello.com/1/client.js?key=26f6ef82d61543a684199da34f16455d
 // ==/UserScript==
 
+// Initialize log system
+if(unsafeWindow.console){
+   var GM_log = unsafeWindow.console.log;
+}
+
 // Add login button
 $('body').append('<div id="loggedout"><a id="connectLink" href="#">Connect To Trello</a></div>');
 $('body').append('<div id="loggedin"><div id="header"> Logged in to TRELLO - <a id="disconnect" href="#">Log Out</a></div><div id="output"></div></div>');
@@ -53,10 +58,7 @@ var onAuthorize = function() {
 
 $("#disconnect").click(logout);
 
-// Initialize log system
-if(unsafeWindow.console){
-   var GM_log = unsafeWindow.console.log;
-}
+
 
 // Déterminer le projet
 
@@ -89,7 +91,7 @@ function populateElementWithValueAt(string){
 
 // récupérer les infos de la fiche
 var card = new Object();
-card.num = populateElementWithValueAt(cardNumPath);
+card.num = populateElementWithValueAt("/html/body/table[3]/tbody/tr[3]/td[1]");
 card.project = populateElementWithValueAt("/html/body/table[3]/tbody/tr[3]/td[2]");
 card.category = populateElementWithValueAt("/html/body/table[3]/tbody/tr[3]/td[3]");
 card.initialDate = populateElementWithValueAt("/html/body/table[3]/tbody/tr[3]/td[5]");
