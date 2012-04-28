@@ -1,20 +1,62 @@
 // ==UserScript==
 // @name           MantisTrello Script
-// @description    Script to create/automove cards in trello 
+// @description    Script to create/automove cards in trello (inspired from http://jsfiddle.net/E4rLn/)
 // @version        0.1
 // @date           2012-04-27
 // @author         FiNaLsPY
 // @namespace      http://konkest.com
 // @include        */bugs/view.php*
+// @require        http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js
+// @require		   https://api.trello.com/1/client.js?key=26f6ef82d61543a684199da34f16455d
 // ==/UserScript==
+
+// Add login button
+$('body').append('<div id="loggedout"><a id="connectLink" href="#">Connect To Trello</a></div>');
+$('body').append('<div id="loggedin"><div id="header"> Logged in to TRELLO - <a id="disconnect" href="#">Log Out</a></div><div id="output"></div></div>');
+$('#loggedout').css('position','absolute').css('right','10px').css('top','10px').css('font-size','20px').show();
+$('#loggedin').css('position','absolute').css('right','10px').css('top','10px').css('font-size','20px').hide();
+
+
+$("#connectLink").click(function(){
+	GM_log('Try to connect ...');
+    Trello.authorize({
+        type: "popup",
+        success: onAuthorize,
+        scope: { write: true, read: true }
+    });
+});
+
+var logout = function() {
+    Trello.deauthorize();
+    updateLoggedIn();
+    GM_log('DISCONNECTED');
+};  
+
+Trello.authorize({
+    interactive:false,
+    success: onAuthorize
+});
+
+var updateLoggedIn = function() {
+    var isLoggedIn = Trello.authorized();
+    $("#loggedout").toggle(!isLoggedIn);
+    $("#loggedin").toggle(isLoggedIn);        
+};
+   
+var onAuthorize = function() {
+    updateLoggedIn();
+    $("#output").empty();
+    
+    GM_log("CONNECTED");
+
+};
+
+$("#disconnect").click(logout);
 
 // Initialize log system
 if(unsafeWindow.console){
    var GM_log = unsafeWindow.console.log;
 }
-
-// Initialize values path variables
-var cardNumPath = "/html/body/table[3]/tbody/tr[3]/td[1]";
 
 // DŽterminer le projet
 
